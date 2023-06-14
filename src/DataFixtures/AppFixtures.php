@@ -28,6 +28,7 @@ class AppFixtures extends Fixture
     public function load(ObjectManager $manager): void
     {
 
+        // ! Creation Admin
         $admin = new User;
         $admin->setEmail('admin@mil.fr');
         $admin->setRoles(['ROLE_ADMIN']);
@@ -35,7 +36,8 @@ class AppFixtures extends Fixture
         $admin->setPassword($hashedPassword);
 
         $manager->persist($admin);
-
+        
+        // ? Creation Actor
         for($i =0; $i < 30; $i++){
             $actor = new Actor;
             $actor->setLastName("Doe" . $i);
@@ -50,19 +52,7 @@ class AppFixtures extends Fixture
             $manager->persist($actor);
         }
 
-        // for($i =0; $i < 30; $i++){
-        //     $writer = new Writer;
-        //     $writer->setLastName("Doe");
-        //     $writer->setFirstName("John");
-        //     $day = rand(10, 30);
-        //     $month = rand(1, 12);
-        //     $year = rand(1950, 2000);
-        //     $writer->setBirthDate($day . "/" . $month . "/" .$year);
-            
-
-        //     $manager->persist($writer);
-        // }
-
+        // ? Creation Writer
         for($i =0; $i < 30; $i++){
             $writer = new Writer;
             $writer->setLastName("Realistor" . $i);
@@ -75,6 +65,16 @@ class AppFixtures extends Fixture
             $this->addReference('writer_' .$i, $writer);
 
             $manager->persist($writer);
+        }
+
+        // ? Creation Genre
+        for($i =0; $i < 30; $i++){
+            $genre = new Genre;
+            $genre->setTitle("genre " . $i);
+
+            $this->addReference('genre_' . $i, $genre);
+
+            $manager->persist($genre);
         }
 
 
@@ -92,7 +92,8 @@ class AppFixtures extends Fixture
             $movie->setSlug($this->slugger->slug($movie->getTitle()));
             $numberActor = rand(3, 7);
             $numberWriter = rand(3, 7);
-            
+            $numberGenre = rand(3, 7);
+
             for($j = 0; $j < $numberActor; $j++){
                 $actorReference = $this->getReference('actor_' . $i);
                 $movie->addActor($actorReference);
@@ -103,6 +104,11 @@ class AppFixtures extends Fixture
                 $movie->addWriter($writerReference);
             }
 
+            for($j = 0; $j < $numberGenre; $j++){
+                $genreReference = $this->getReference('genre_' . $i);
+                $movie->addGenre($genreReference);
+            }
+
 
             $manager->persist($movie);
         }
@@ -110,12 +116,7 @@ class AppFixtures extends Fixture
 
 
 
-        for($i =0; $i < 10; $i++){
-            $genre = new Genre;
-            $genre->setTitle("genre " . $i);
 
-            $manager->persist($genre);
-        }
 
         $manager->flush();
     }

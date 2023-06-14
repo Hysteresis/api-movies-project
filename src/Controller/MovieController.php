@@ -64,5 +64,6 @@ class MovieController extends AbstractController
     }
 
     // #[Route('/movies/{id}')]
+    
 }
 
