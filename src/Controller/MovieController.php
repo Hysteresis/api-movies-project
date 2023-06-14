@@ -7,6 +7,7 @@ use App\Repository\MovieRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Serializer\SerializerInterface;
@@ -79,5 +80,33 @@ class MovieController extends AbstractController
             Response::HTTP_NO_CONTENT,
         );
     }
+
+    #[Route('/movies/', name: 'createMovie', methods: ['POST'])]
+    public function createMovie(
+        Request $request,
+        SerializerInterface $serializer,
+        EntityManagerInterface $em,
+    ): JsonResponse
+    {
+        //? je deserialize la requete en Objet Movie::Class $movie
+        $movie = $serializer->deserialize($request->getContent(), Movie::class, 'json');
+
+        $em->persist($movie);
+        $em->flush();
+
+        //? je renvoie un json car un film vient d'être créé donc y'a  un id
+
+        $jsonMovie = $serializer->serialize($movie, 'json', ['groups' => 'getMovies']);
+
+        
+        return new JsonResponse(
+            $jsonMovie, 
+            Response::HTTP_CREATED,
+            [],
+            true
+        );
+    }
+
+
 }
 
