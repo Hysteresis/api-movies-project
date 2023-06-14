@@ -2,7 +2,9 @@
 
 namespace App\Controller;
 
+use App\Entity\Movie;
 use App\Repository\MovieRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -63,7 +65,19 @@ class MovieController extends AbstractController
         );
     }
 
-    // #[Route('/movies/{id}')]
-    
+    #[Route('/movies/{id}', name: 'deleteMovie', methods: ['DELETE'])]
+    public function deleteMovie(
+        Movie $movie,
+        EntityManagerInterface $em,
+    ): JsonResponse
+    {
+        $em->remove($movie);
+        $em->flush();
+        
+        return new JsonResponse(
+            null, 
+            Response::HTTP_NO_CONTENT,
+        );
+    }
 }
 
