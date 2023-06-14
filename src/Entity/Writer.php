@@ -4,7 +4,10 @@ namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
 use App\Repository\WriterRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: WriterRepository::class)]
 #[ApiResource]
@@ -13,16 +16,28 @@ class Writer
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(["getMovies"])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(["getMovies"])]
     private ?string $lastName = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(["getMovies"])]
     private ?string $firstName = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(["getMovies"])]
     private ?string $birthDate = null;
+
+    #[ORM\ManyToMany(targetEntity: Movie::class, mappedBy: 'writers')]
+    private Collection $movies;
+
+    public function __construct()
+    {
+        $this->movies = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -61,6 +76,33 @@ class Writer
     public function setBirthDate(string $birthDate): static
     {
         $this->birthDate = $birthDate;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Movie>
+     */
+    public function getMovies(): Collection
+    {
+        return $this->movies;
+    }
+
+    public function addMovie(Movie $movie): static
+    {
+        if (!$this->movies->contains($movie)) {
+            $this->movies->add($movie);
+            $movie->addWriter($this);
+        }
+
+        return $this;
+    }
+
+    public function removeMovie(Movie $movie): static
+    {
+        if ($this->movies->removeElement($movie)) {
+            $movie->removeWriter($this);
+        }
 
         return $this;
     }

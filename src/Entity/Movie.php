@@ -52,9 +52,14 @@ class Movie
     #[Groups(["getMovies"])]
     private Collection $actors;
 
+    #[ORM\ManyToMany(targetEntity: Writer::class, inversedBy: 'movies')]
+    #[Groups(["getMovies"])]
+    private Collection $writers;
+
     public function __construct()
     {
         $this->actors = new ArrayCollection();
+        $this->writers = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -166,6 +171,30 @@ class Movie
     public function removeActor(Actor $actor): static
     {
         $this->actors->removeElement($actor);
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Writer>
+     */
+    public function getWriters(): Collection
+    {
+        return $this->writers;
+    }
+
+    public function addWriter(Writer $writer): static
+    {
+        if (!$this->writers->contains($writer)) {
+            $this->writers->add($writer);
+        }
+
+        return $this;
+    }
+
+    public function removeWriter(Writer $writer): static
+    {
+        $this->writers->removeElement($writer);
 
         return $this;
     }

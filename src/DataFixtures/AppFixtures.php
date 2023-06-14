@@ -38,7 +38,7 @@ class AppFixtures extends Fixture
 
         for($i =0; $i < 30; $i++){
             $actor = new Actor;
-            $actor->setLastName("Doe");
+            $actor->setLastName("Doe" . $i);
             $actor->setFirstName("John");
             $day = rand(10, 30);
             $month = rand(1, 12);
@@ -48,6 +48,33 @@ class AppFixtures extends Fixture
             $this->addReference('actor_' .$i, $actor);
 
             $manager->persist($actor);
+        }
+
+        // for($i =0; $i < 30; $i++){
+        //     $writer = new Writer;
+        //     $writer->setLastName("Doe");
+        //     $writer->setFirstName("John");
+        //     $day = rand(10, 30);
+        //     $month = rand(1, 12);
+        //     $year = rand(1950, 2000);
+        //     $writer->setBirthDate($day . "/" . $month . "/" .$year);
+            
+
+        //     $manager->persist($writer);
+        // }
+
+        for($i =0; $i < 30; $i++){
+            $writer = new Writer;
+            $writer->setLastName("Realistor" . $i);
+            $writer->setFirstName("John");
+            $day = rand(10, 30);
+            $month = rand(1, 12);
+            $year = rand(1950, 2000);
+            $writer->setBirthDate($day . "/" . $month . "/" .$year);
+
+            $this->addReference('writer_' .$i, $writer);
+
+            $manager->persist($writer);
         }
 
 
@@ -64,27 +91,23 @@ class AppFixtures extends Fixture
             $movie->setPoster('default.png');
             $movie->setSlug($this->slugger->slug($movie->getTitle()));
             $numberActor = rand(3, 7);
+            $numberWriter = rand(3, 7);
             
             for($j = 0; $j < $numberActor; $j++){
                 $actorReference = $this->getReference('actor_' . $i);
                 $movie->addActor($actorReference);
             }
 
+            for($j = 0; $j < $numberWriter; $j++){
+                $writerReference = $this->getReference('writer_' . $i);
+                $movie->addWriter($writerReference);
+            }
+
 
             $manager->persist($movie);
         }
 
-        for($i =0; $i < 30; $i++){
-            $writer = new Writer;
-            $writer->setLastName("Doe");
-            $writer->setFirstName("John");
-            $day = rand(10, 30);
-            $month = rand(1, 12);
-            $year = rand(1950, 2000);
-            $writer->setBirthDate($day . "/" . $month . "/" .$year);
 
-            $manager->persist($writer);
-        }
 
 
         for($i =0; $i < 10; $i++){

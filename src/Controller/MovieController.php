@@ -9,16 +9,18 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Serializer\SerializerInterface;
 
+#[Route('/api')]
 class MovieController extends AbstractController
 {
-    #[Route('/api/movies', name: 'app_movies', methods:['GET'])]
-    public function getMoviesList(
+    #[Route('/movies', name: 'movies', methods:['GET'])]
+    public function getAllMovies(
         MovieRepository $movieRepository,
         SerializerInterface $serializer,
         ): JsonResponse
     {
 
         $movieList = $movieRepository->findAll();
+
         $jsonMovieList = $serializer->serialize(
             $movieList, 
             'json',
@@ -34,15 +36,15 @@ class MovieController extends AbstractController
         );
     }
 
-    #[Route('/api/movies/{slug}', name:'app_detail_movie', methods: ['GET'])]
+    #[Route('/movies/{id}', name:'detailMovie', methods: ['GET'])]
     public function getDetailMovie(
         MovieRepository $movieRepository,
         SerializerInterface $serializer,
-        $slug,
+        $id,
         ): JsonResponse
     {
 
-        $movie = $movieRepository->findBy(['slug' => $slug]);
+        $movie = $movieRepository->findBy(['id' => $id]);
 
         if($movie){
             $jsonMovie = $serializer->serialize($movie, 'json', ['groups' => 'getMovies']);
@@ -60,5 +62,7 @@ class MovieController extends AbstractController
             Response::HTTP_NOT_FOUND,
         );
     }
+
+    // #[Route('/movies/{id}')]
 }
 
