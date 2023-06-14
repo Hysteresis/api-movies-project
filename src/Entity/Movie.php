@@ -4,8 +4,11 @@ namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
 use App\Repository\MovieRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: MovieRepository::class)]
 #[ApiResource]
@@ -14,28 +17,45 @@ class Movie
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(["getMovies"])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(["getMovies"])]
     private ?string $title = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Groups(["getMovies"])]
     private ?string $rated = null;
 
     #[ORM\Column(type: Types::DATE_MUTABLE)]
+    #[Groups(["getMovies"])]
     private ?\DateTimeInterface $released = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Groups(["getMovies"])]
     private ?string $runtime = null;
 
     #[ORM\Column(type: Types::TEXT)]
+    #[Groups(["getMovies"])]
     private ?string $plot = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Groups(["getMovies"])]
     private ?string $poster = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(["getMovies"])]
     private ?string $slug = null;
+
+    #[ORM\ManyToMany(targetEntity: Actor::class, inversedBy: 'movies')]
+    #[Groups(["getMovies"])]
+    private Collection $actors;
+
+    public function __construct()
+    {
+        $this->actors = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -122,6 +142,30 @@ class Movie
     public function setSlug(string $slug): static
     {
         $this->slug = $slug;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Actor>
+     */
+    public function getActors(): Collection
+    {
+        return $this->actors;
+    }
+
+    public function addActor(Actor $actor): static
+    {
+        if (!$this->actors->contains($actor)) {
+            $this->actors->add($actor);
+        }
+
+        return $this;
+    }
+
+    public function removeActor(Actor $actor): static
+    {
+        $this->actors->removeElement($actor);
 
         return $this;
     }

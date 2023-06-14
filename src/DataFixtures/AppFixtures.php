@@ -36,6 +36,21 @@ class AppFixtures extends Fixture
 
         $manager->persist($admin);
 
+        for($i =0; $i < 30; $i++){
+            $actor = new Actor;
+            $actor->setLastName("Doe");
+            $actor->setFirstName("John");
+            $day = rand(10, 30);
+            $month = rand(1, 12);
+            $year = rand(1950, 2000);
+            $actor->setBirthDate($day . "/" . $month . "/" .$year);
+
+            $this->addReference('actor_' .$i, $actor);
+
+            $manager->persist($actor);
+        }
+
+
 
         for($i =0; $i < 30; $i++){
             $movie = new Movie;
@@ -48,6 +63,13 @@ class AppFixtures extends Fixture
             $movie->setPlot("Ceci est la description du film " . $i . "-> In non castra Paulus squalorem castra uncosque plures nullos enim Constantio plures multos uncosque proscripti actique nullos ad sunt multos movebantur alii.");
             $movie->setPoster('default.png');
             $movie->setSlug($this->slugger->slug($movie->getTitle()));
+            $numberActor = rand(3, 7);
+            
+            for($j = 0; $j < $numberActor; $j++){
+                $actorReference = $this->getReference('actor_' . $i);
+                $movie->addActor($actorReference);
+            }
+
 
             $manager->persist($movie);
         }
@@ -64,18 +86,6 @@ class AppFixtures extends Fixture
             $manager->persist($writer);
         }
 
-        for($i =0; $i < 30; $i++){
-            $actor = new Actor;
-            $actor->setLastName("Doe");
-            $actor->setFirstName("John");
-            $day = rand(10, 30);
-            $month = rand(1, 12);
-            $year = rand(1950, 2000);
-            $actor->setBirthDate($day . "/" . $month . "/" .$year);
-
-
-            $manager->persist($actor);
-        }
 
         for($i =0; $i < 10; $i++){
             $genre = new Genre;

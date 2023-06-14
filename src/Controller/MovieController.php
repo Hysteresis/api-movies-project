@@ -17,10 +17,13 @@ class MovieController extends AbstractController
         SerializerInterface $serializer,
         ): JsonResponse
     {
+
         $movieList = $movieRepository->findAll();
         $jsonMovieList = $serializer->serialize(
             $movieList, 
-            'json'
+            'json',
+            ['groups' => 'getMovies']
+            
         );
 
         return new JsonResponse(
@@ -38,11 +41,11 @@ class MovieController extends AbstractController
         $slug,
         ): JsonResponse
     {
+
         $movie = $movieRepository->findBy(['slug' => $slug]);
 
         if($movie){
-
-            $jsonMovie = $serializer->serialize($movie, 'json');
+            $jsonMovie = $serializer->serialize($movie, 'json', ['groups' => 'getMovies']);
             
             return new JsonResponse(
                 $jsonMovie,
@@ -58,3 +61,4 @@ class MovieController extends AbstractController
         );
     }
 }
+
