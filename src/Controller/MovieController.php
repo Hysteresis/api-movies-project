@@ -81,7 +81,7 @@ class MovieController extends AbstractController
         );
     }
 
-    #[Route('/movies/', name: 'createMovie', methods: ['POST'])]
+    #[Route('/movies', name: 'createMovie', methods: ['POST'])]
     public function createMovie(
         Request $request,
         SerializerInterface $serializer,
@@ -90,7 +90,17 @@ class MovieController extends AbstractController
     {
         //? je deserialize la requete en Objet Movie::Class $movie
         $movie = $serializer->deserialize($request->getContent(), Movie::class, 'json');
+        
 
+        foreach ($movie->getActors() as $actor) {
+            $em->persist($actor);
+        }
+        foreach ($movie->getWriters() as $writer) {
+            $em->persist($writer);
+        }
+        foreach ($movie->getGenres() as $genre) {
+            $em->persist($genre);
+        }
         $em->persist($movie);
         $em->flush();
 
