@@ -52,15 +52,15 @@ class MovieController extends AbstractController
         if($movie){
             $jsonMovie = $serializer->serialize($movie, 'json', ['groups' => 'getMovies']);
             
-            return new JsonResponse(
-                $jsonMovie,
-                Response::HTTP_OK,
-                [],
-                true
+        return new JsonResponse(
+            $jsonMovie,
+            Response::HTTP_OK,
+            [],
+            true
             );
         } 
 
-        return new JsonResponse(
+    return new JsonResponse(
             null,
             Response::HTTP_NOT_FOUND,
         );
