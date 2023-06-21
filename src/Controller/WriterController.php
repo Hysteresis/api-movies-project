@@ -13,6 +13,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Component\Serializer\SerializerInterface;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 #[Route('/api')]
 class WriterController extends AbstractController
@@ -84,10 +85,16 @@ class WriterController extends AbstractController
         SerializerInterface $serializer,
         EntityManagerInterface $em,
         UrlGeneratorInterface $urlGenerator,
+        ValidatorInterface $validator,
     ): JsonResponse
     {
         //? je deserialize la requete en Objet Movie::Class $movie
         $writer = $serializer->deserialize($request->getContent(), Writer::class, 'json');
+
+        $errors = $validator->validate($writer);
+        if ($errors->count() > 0) {
+            return new JsonResponse($serializer->serialize($errors, 'json'), JsonResponse::HTTP_BAD_REQUEST, [], true);
+        }
 
         $em->persist($writer);
         $em->flush();

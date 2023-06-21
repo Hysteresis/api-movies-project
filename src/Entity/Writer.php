@@ -22,10 +22,16 @@ class Writer
 
     #[ORM\Column(length: 255)]
     #[Groups(["getMovies", "getWriters"])]
+    #[Assert\NotBlank(message: "Le nom de l'acteur est obligatoire")]
+    #[Assert\Length(min: 1, max: 255, minMessage: "Le nom doit faire au moins {{ limit }} caractères", 
+                    maxMessage: "Le nom ne peut pas faire plus de {{ limit }} caractères")]
     private ?string $lastName = null;
 
     #[ORM\Column(length: 255)]
     #[Groups(["getMovies", "getWriters"])]
+    #[Assert\NotBlank(message: "Le prénom de l'acteur est obligatoire")]
+    #[Assert\Length(min: 1, max: 255, minMessage: "Le prénom doit faire au moins {{ limit }} caractères", 
+                    maxMessage: "Le prénom ne peut pas faire plus de {{ limit }} caractères")]
     private ?string $firstName = null;
 
     #[ORM\Column(length: 255)]

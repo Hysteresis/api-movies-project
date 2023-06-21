@@ -14,6 +14,7 @@ use Symfony\Component\Routing\Generator\UrlGenerator;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Component\Serializer\SerializerInterface;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 #[Route('/api')]
 class GenreController extends AbstractController
@@ -83,10 +84,16 @@ class GenreController extends AbstractController
         SerializerInterface $serializer,
         EntityManagerInterface $em,
         UrlGeneratorInterface $urlGenerator,
+        ValidatorInterface $validator,
     ): JsonResponse
     {
         //? je deserialize la requete en Objet Movie::Class $movie
         $genre = $serializer->deserialize($request->getContent(), Genre::class, 'json');
+
+        $errors = $validator->validate($genre);
+        if ($errors->count() > 0) {
+            return new JsonResponse($serializer->serialize($errors, 'json'), JsonResponse::HTTP_BAD_REQUEST, [], true);
+        }
 
         $em->persist($genre);
         $em->flush();
