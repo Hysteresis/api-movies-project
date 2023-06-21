@@ -42,17 +42,14 @@ class MovieRepository extends ServiceEntityRepository
 //    /**
 //     * @return Movie[] Returns an array of Movie objects
 //     */
-//    public function findByExampleField($value): array
-//    {
-//        return $this->createQueryBuilder('m')
-//            ->andWhere('m.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->orderBy('m.id', 'ASC')
-//            ->setMaxResults(10)
-//            ->getQuery()
-//            ->getResult()
-//        ;
-//    }
+   public function findAllWithPagination($page, $limit): array
+   {
+    return $this->createQueryBuilder('b')
+        ->setFirstResult(($page - 1 ) * $limit)
+        ->setMaxResults($limit)
+        ->getQuery()
+        ->getResult();
+   }
 
 //    public function findOneBySomeField($value): ?Movie
 //    {

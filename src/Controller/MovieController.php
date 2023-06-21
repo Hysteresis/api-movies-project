@@ -24,12 +24,17 @@ class MovieController extends AbstractController
 {
     #[Route('/movies', name: 'movies', methods:['GET'])]
     public function getAllMovies(
+        Request $request,
         MovieRepository $movieRepository,
         SerializerInterface $serializer,
         ): JsonResponse
     {
 
-        $movieList = $movieRepository->findAll();
+        //pagination 
+        $page = $request->get('page', 1);
+        $limit = $request->get('limit',3);
+
+        $movieList = $movieRepository->findAllWithPagination($page, $limit);
 
         $jsonMovieList = $serializer->serialize(
             $movieList, 
