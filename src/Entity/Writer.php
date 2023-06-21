@@ -16,21 +16,22 @@ class Writer
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(["getMovies"])]
+    #[Groups(["getMovies", "getWriters"])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(["getMovies"])]
+    #[Groups(["getMovies", "getWriters"])]
     private ?string $lastName = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(["getMovies"])]
+    #[Groups(["getMovies", "getWriters"])]
     private ?string $firstName = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(["getMovies"])]
+    #[Groups(["getMovies", "getWriters"])]
     private ?string $birthDate = null;
 
+    #[Groups(["getWriters"])]
     #[ORM\ManyToMany(targetEntity: Movie::class, mappedBy: 'writers')]
     private Collection $movies;
 

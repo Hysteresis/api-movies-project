@@ -2,8 +2,8 @@
 
 namespace App\Controller;
 
-use App\Entity\Actor;
-use App\Repository\ActorRepository;
+use App\Entity\Writer;
+use App\Repository\WriterRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -13,62 +13,61 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Serializer\SerializerInterface;
 
 #[Route('/api')]
-class ActorController extends AbstractController
+class WriterController extends AbstractController
 {
-    #[Route('/actors', name: 'actors', methods: ['GET'])]
-    public function getAllActors(
-        ActorRepository $actorRepository,
+    #[Route('/writers', name: 'writers', methods: ['GET'])]
+    public function getAllWriters(
+        WriterRepository $writerRepository,
         SerializerInterface $serializer,
     ): JsonResponse
     {
         //recupere objet de tous les actors
-        $listActor = $actorRepository->findAll();
+        $listWriter = $writerRepository->findAll();
 
         // Transoform objet listACtors en JSON
-        $jsonListActor = $serializer->serialize($listActor , 'json', ['groups' => 'getActors']);
+        $jsonListWriter = $serializer->serialize($listWriter , 'json', ['groups' => 'getWriters']);
 
 
         return new JsonResponse(
-            $jsonListActor,
+            $jsonListWriter,
             Response::HTTP_OK,
             [],
             true
         );
     }
 
-    #[Route('/actors/{id}', name: 'detailActor', methods: ['GET'])]
-    public function getDetailActor(
-        ActorRepository $actorRepository,
+    #[Route('/writers/{id}', name: 'detailWriter', methods: ['GET'])]
+    public function getDetailWriter(
+        WriterRepository $writerRepository,
         SerializerInterface $serializer,
         $id,
     ): JsonResponse
     {
-        $actor = $actorRepository->findBy(['id' => $id]);
+        $writer = $writerRepository->findBy(['id' => $id]);
 
-        if($actor){
-            $jsonActor = $serializer->serialize($actor, 'json', ['groups' => 'getActors']);
+        if($writer){
+            $jsonWriter = $serializer->serialize($writer, 'json', ['groups' => 'getWriters']);
 
         return new JsonResponse(
-            $jsonActor,
+            $jsonWriter,
             Response::HTTP_OK,
             [],
             true
             );
-        } 
-
-    return new JsonResponse(
-        null,
-        Response::HTTP_NOT_FOUND,
-    );
+        }
+        return new JsonResponse(
+            null,
+            Response::HTTP_NOT_FOUND,
+        );
     }
 
-    #[Route('/actors/{id}', name: 'deleteActor', methods: ['DELETE'])]
+    #[Route('/writers/{id}', name: 'deleteWriter', methods: ['DELETE'])]
     public function deleteActor(
-        Actor $actor,
+        Writer $writer,
         EntityManagerInterface $em,
     ): JsonResponse
     {
-        $em->remove($actor);
+        $em->remove($writer);
         $em->flush();
         
         return new JsonResponse(
@@ -77,7 +76,7 @@ class ActorController extends AbstractController
         );
     }
 
-    #[Route('/actors', name: 'createActor', methods: ['POST'])]
+    #[Route('/writers', name: 'createWriter', methods: ['POST'])]
     public function createActor(
         Request $request,
         SerializerInterface $serializer,
@@ -85,13 +84,13 @@ class ActorController extends AbstractController
     ): JsonResponse
     {
         //? je deserialize la requete en Objet Movie::Class $movie
-        $actor = $serializer->deserialize($request->getContent(), Actor::class, 'json');
+        $writer = $serializer->deserialize($request->getContent(), Writer::class, 'json');
 
-        $em->persist($actor);
+        $em->persist($writer);
         $em->flush();
 
         //? je renvoie un json car un film vient d'être créé donc y'a  un id
-        $jsonActor = $serializer->serialize($actor, 'json', ['groups' => 'getActors']);
+        $jsonActor = $serializer->serialize($writer, 'json', ['groups' => 'getActors']);
 
         return new JsonResponse(
             $jsonActor, 
@@ -100,5 +99,6 @@ class ActorController extends AbstractController
             true
         );
     }
-
 }
+
+
