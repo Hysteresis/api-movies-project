@@ -3,13 +3,18 @@
 namespace App\Controller;
 
 use App\Entity\Movie;
+use App\Repository\ActorRepository;
+use App\Repository\GenreRepository;
 use App\Repository\MovieRepository;
+use App\Repository\WriterRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Component\Serializer\SerializerInterface;
 
 #[Route('/api')]
@@ -86,37 +91,73 @@ class MovieController extends AbstractController
         Request $request,
         SerializerInterface $serializer,
         EntityManagerInterface $em,
+        UrlGeneratorInterface $urlGenerator,
+        ActorRepository $actorRepository,
+        WriterRepository $writerRepository,
+        GenreRepository $genreRepository,
     ): JsonResponse
     {
         //? je deserialize la requete en Objet Movie::Class $movie
         $movie = $serializer->deserialize($request->getContent(), Movie::class, 'json');
         
+        $content = $request->toArray();
 
-        foreach ($movie->getActors() as $actor) {
-            $em->persist($actor);
-        }
-        foreach ($movie->getWriters() as $writer) {
-            $em->persist($writer);
-        }
-        foreach ($movie->getGenres() as $genre) {
-            $em->persist($genre);
-        }
+        $idActor = $content['idActor'] ?? -1;
+        $idWriter = $content['idWriter'] ?? -1;
+        $idGenre = $content['idGenre'] ?? -1;
+
+        $movie->addActor($actorRepository->find($idActor));
+        $movie->addWriter($writerRepository->find($idWriter));
+        $movie->addGenre($genreRepository->find($idGenre));        
+
         $em->persist($movie);
         $em->flush();
 
-        //? je renvoie un json car un film vient d'être créé donc y'a  un id
 
         $jsonMovie = $serializer->serialize($movie, 'json', ['groups' => 'getMovies']);
+
+        $location = $urlGenerator->generate('detailMovie', ['id' => $movie->getId()], UrlGeneratorInterface::ABSOLUTE_URL);
+
 
         
         return new JsonResponse(
             $jsonMovie, 
             Response::HTTP_CREATED,
-            [],
+            ["Location" => $location],
             true
         );
     }
 
+    #[Route('/movies/{id}', name: 'updateMovie', methods: ['PUT'])]
+    public function updateMovie(
+        Request $request,
+        SerializerInterface $serializer,
+        Movie $currentMovie,
+        EntityManagerInterface $em,
+        ActorRepository $actorRepository,
+        WriterRepository $writerRepository,
+        GenreRepository $genreRepository,
+        $id,
+    ): JsonResponse
+    {
 
+        $updatedMovie = $serializer->deserialize($request->getContent(), 
+                Movie::class, 
+                'json', 
+                [AbstractNormalizer::OBJECT_TO_POPULATE => $currentMovie]);
+
+        $content = $request->toArray();
+        $idActor = $content['idActor'] ?? -1;
+        $idWriter = $content['idWriter'] ?? -1;
+        $idGenre = $content['idGenre'] ?? -1;
+
+        $updatedMovie->addActor($actorRepository->find($idActor));
+        $updatedMovie->addWriter($writerRepository->find($idWriter));
+        $updatedMovie->addGenre($genreRepository->find($idGenre));  
+        
+        $em->persist($updatedMovie);
+        $em->flush();
+        return new JsonResponse(null, JsonResponse::HTTP_NO_CONTENT);
+    }
 }
 

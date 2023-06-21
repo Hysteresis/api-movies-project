@@ -22,7 +22,7 @@ class Genre
     private ?string $title = null;
 
     #[ORM\ManyToMany(targetEntity: Movie::class, mappedBy: 'genres')]
-    #[Groups(["getMovies", "getGenres"])]
+    #[Groups(["getGenres"])]
     private Collection $movies;
 
     public function __construct()

@@ -10,6 +10,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Serializer\SerializerInterface;
 
 #[Route('/api')]
@@ -81,6 +82,7 @@ class WriterController extends AbstractController
         Request $request,
         SerializerInterface $serializer,
         EntityManagerInterface $em,
+        UrlGeneratorInterface $urlGenerator,
     ): JsonResponse
     {
         //? je deserialize la requete en Objet Movie::Class $movie
@@ -92,10 +94,13 @@ class WriterController extends AbstractController
         //? je renvoie un json car un film vient d'être créé donc y'a  un id
         $jsonActor = $serializer->serialize($writer, 'json', ['groups' => 'getActors']);
 
+        $location = $urlGenerator->generate('detailWriter', ['id' => $writer->getId()], UrlGeneratorInterface::ABSOLUTE_URL);
+
+
         return new JsonResponse(
             $jsonActor, 
             Response::HTTP_CREATED,
-            [],
+            ["Location" => $location],
             true
         );
     }
