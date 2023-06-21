@@ -8,6 +8,7 @@ use App\Repository\GenreRepository;
 use App\Repository\MovieRepository;
 use App\Repository\WriterRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -72,7 +73,9 @@ class MovieController extends AbstractController
         );
     }
 
+
     #[Route('/movies/{id}', name: 'deleteMovie', methods: ['DELETE'])]
+    #[IsGranted('ROLE_ADMIN', message: 'Vous n\'avez pas les droits suffisants pour supprimer un film')]
     public function deleteMovie(
         Movie $movie,
         EntityManagerInterface $em,
@@ -86,8 +89,10 @@ class MovieController extends AbstractController
             Response::HTTP_NO_CONTENT,
         );
     }
+    
 
     #[Route('/movies', name: 'createMovie', methods: ['POST'])]
+    #[IsGranted('ROLE_ADMIN', message: 'Vous n\'avez pas les droits suffisants pour créer un film')]
     public function createMovie(
         Request $request,
         SerializerInterface $serializer,
@@ -136,6 +141,7 @@ class MovieController extends AbstractController
     }
 
     #[Route('/movies/{id}', name: 'updateMovie', methods: ['PUT'])]
+    #[IsGranted('ROLE_ADMIN', message: 'Vous n\'avez pas les droits suffisants pour éditer un film')]
     public function updateMovie(
         Request $request,
         SerializerInterface $serializer,

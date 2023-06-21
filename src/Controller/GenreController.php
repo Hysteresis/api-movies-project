@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Genre;
 use App\Repository\GenreRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -64,6 +65,7 @@ class GenreController extends AbstractController
     }
 
     #[Route('/genres/{id}', name: 'deleteGenre', methods: ['DELETE'])]
+    #[IsGranted('ROLE_ADMIN', message: 'Vous n\'avez pas les droits suffisants pour supprimer un genre')]
     public function deleteGenres(
         Genre $genre,
         EntityManagerInterface $em,
@@ -79,6 +81,7 @@ class GenreController extends AbstractController
     }
 
     #[Route('/genres', name: 'createGenre', methods: ['POST'])]
+    #[IsGranted('ROLE_ADMIN', message: 'Vous n\'avez pas les droits suffisants pour créer un genre')]
     public function createActor(
         Request $request,
         SerializerInterface $serializer,
@@ -114,6 +117,7 @@ class GenreController extends AbstractController
 
     
     #[Route('/genres/{id}', name: 'updateGenres', methods: ['PUT'])]
+    #[IsGranted('ROLE_ADMIN', message: 'Vous n\'avez pas les droits suffisants pour éditer un genre')]
     public function updateGenres(
         Request $request,
         SerializerInterface $serializer,

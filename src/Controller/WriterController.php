@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Writer;
 use App\Repository\WriterRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -65,6 +66,7 @@ class WriterController extends AbstractController
     }
 
     #[Route('/writers/{id}', name: 'deleteWriter', methods: ['DELETE'])]
+    #[IsGranted('ROLE_ADMIN', message: 'Vous n\'avez pas les droits suffisants pour supprimer un réalisateur')]
     public function deleteActor(
         Writer $writer,
         EntityManagerInterface $em,
@@ -80,6 +82,7 @@ class WriterController extends AbstractController
     }
 
     #[Route('/writers', name: 'createWriter', methods: ['POST'])]
+    #[IsGranted('ROLE_ADMIN', message: 'Vous n\'avez pas les droits suffisants pour créer un réalisateur')]
     public function createActor(
         Request $request,
         SerializerInterface $serializer,
@@ -114,6 +117,7 @@ class WriterController extends AbstractController
     }
 
     #[Route('/writers/{id}', name: 'updateWriters', methods: ['PUT'])]
+    #[IsGranted('ROLE_ADMIN', message: 'Vous n\'avez pas les droits suffisants pour éditer un réalisateur')]
     public function updateWriter(
         Request $request,
         SerializerInterface $serializer,

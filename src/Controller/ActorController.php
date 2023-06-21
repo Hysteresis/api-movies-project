@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Actor;
 use App\Repository\ActorRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -66,6 +67,7 @@ class ActorController extends AbstractController
     }
 
     #[Route('/actors/{id}', name: 'deleteActor', methods: ['DELETE'])]
+    #[IsGranted('ROLE_ADMIN', message: 'Vous n\'avez pas les droits suffisants pour supprimer un acteur')]
     public function deleteActor(
         Actor $actor,
         EntityManagerInterface $em,
@@ -81,6 +83,7 @@ class ActorController extends AbstractController
     }
 
     #[Route('/actors', name: 'createActor', methods: ['POST'])]
+    #[IsGranted('ROLE_ADMIN', message: 'Vous n\'avez pas les droits suffisants pour créer un acteur')]
     public function createActor(
         Request $request,
         SerializerInterface $serializer,
@@ -115,6 +118,7 @@ class ActorController extends AbstractController
     }
 
     #[Route('/actors/{id}', name: 'updateActors', methods: ['PUT'])]
+    #[IsGranted('ROLE_ADMIN', message: 'Vous n\'avez pas les droits suffisants pour éditer un acteur')]
     public function updateActor(
         Request $request,
         SerializerInterface $serializer,

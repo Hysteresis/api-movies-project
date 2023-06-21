@@ -30,12 +30,21 @@ class AppFixtures extends Fixture
 
         // ! Creation Admin
         $admin = new User;
-        $admin->setEmail('admin@mil.fr');
+        $admin->setEmail('admin@mail.fr');
         $admin->setRoles(['ROLE_ADMIN']);
-        $hashedPassword = $this->passwordHasher->hashPassword($admin, 'admin');
+        $hashedPassword = $this->passwordHasher->hashPassword($admin, 'azerty');
         $admin->setPassword($hashedPassword);
 
         $manager->persist($admin);
+
+        // ! Creation User
+        $user = new User;
+        $user->setEmail('user@mail.fr');
+        $user->setRoles(['ROLE_USER']);
+        $hashedPassword = $this->passwordHasher->hashPassword($user, 'azerty');
+        $user->setPassword($hashedPassword);
+
+        $manager->persist($user);
         
         // ? Creation Actor
         for($i =0; $i < 30; $i++){
