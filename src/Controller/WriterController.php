@@ -11,6 +11,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Component\Serializer\SerializerInterface;
 
 #[Route('/api')]
@@ -103,6 +104,26 @@ class WriterController extends AbstractController
             ["Location" => $location],
             true
         );
+    }
+
+    #[Route('/writers/{id}', name: 'updateWriters', methods: ['PUT'])]
+    public function updateWriter(
+        Request $request,
+        SerializerInterface $serializer,
+        Writer $currentWriter,
+        EntityManagerInterface $em,
+        $id,
+    ): JsonResponse
+    {
+
+        $updatedWriter= $serializer->deserialize($request->getContent(), 
+                Writer::class, 
+                'json', 
+                [AbstractNormalizer::OBJECT_TO_POPULATE => $currentWriter]);
+
+        $em->persist($updatedWriter);
+        $em->flush();
+        return new JsonResponse(null, JsonResponse::HTTP_NO_CONTENT);
     }
 }
 

@@ -12,6 +12,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\Generator\UrlGenerator;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Component\Serializer\SerializerInterface;
 
 #[Route('/api')]
@@ -102,5 +103,26 @@ class GenreController extends AbstractController
             ["Location" => $location],
             true
         );
+    }
+
+    
+    #[Route('/genres/{id}', name: 'updateGenres', methods: ['PUT'])]
+    public function updateGenres(
+        Request $request,
+        SerializerInterface $serializer,
+        Genre $currentGenre,
+        EntityManagerInterface $em,
+        $id,
+    ): JsonResponse
+    {
+
+        $updatedGenre= $serializer->deserialize($request->getContent(), 
+                Genre::class, 
+                'json', 
+                [AbstractNormalizer::OBJECT_TO_POPULATE => $currentGenre]);
+
+        $em->persist($updatedGenre);
+        $em->flush();
+        return new JsonResponse(null, JsonResponse::HTTP_NO_CONTENT);
     }
 }
