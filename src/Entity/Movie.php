@@ -17,35 +17,35 @@ class Movie
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(["getMovies", "getActors", "getWriters"])]
+    #[Groups(["getMovies", "getActors", "getWriters", "getGenres"])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(["getMovies", "getActors", "getWriters"])]
+    #[Groups(["getMovies", "getActors", "getWriters", "getGenres"])]
     private ?string $title = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    #[Groups(["getMovies", "getActors", "getWriters"])]
+    #[Groups(["getMovies", "getActors", "getWriters", "getGenres"])]
     private ?string $rated = null;
 
     #[ORM\Column(type: Types::DATE_MUTABLE)]
-    #[Groups(["getMovies", "getActors", "getWriters"])]
+    #[Groups(["getMovies", "getActors", "getWriters", "getGenres"])]
     private ?\DateTimeInterface $released = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    #[Groups(["getMovies", "getActors", "getWriters"])]
+    #[Groups(["getMovies", "getActors", "getWriters", "getGenres"])]
     private ?string $runtime = null;
 
     #[ORM\Column(type: Types::TEXT)]
-    #[Groups(["getMovies", "getActors", "getWriters"])]
+    #[Groups(["getMovies", "getActors", "getWriters", "getGenres"])]
     private ?string $plot = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    #[Groups(["getMovies", "getActors", "getWriters"])]
+    #[Groups(["getMovies", "getActors", "getWriters", "getGenres"])]
     private ?string $poster = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(["getMovies", "getActors", "getWriters"])]
+    #[Groups(["getMovies", "getActors", "getWriters", "getGenres"])]
     private ?string $slug = null;
 
     #[ORM\ManyToMany(targetEntity: Actor::class, inversedBy: 'movies')]
