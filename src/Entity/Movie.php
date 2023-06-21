@@ -9,6 +9,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: MovieRepository::class)]
 #[ApiResource]
@@ -22,10 +23,16 @@ class Movie
 
     #[ORM\Column(length: 255)]
     #[Groups(["getMovies", "getActors", "getWriters", "getGenres"])]
+    #[Assert\NotBlank(message: "Le titre du film est obligatoire")]
+    #[Assert\Length(min: 1, max: 255, minMessage: "Le titre doit faire au moins {{ limit }} caractères", 
+                    maxMessage: "Le titre ne peut pas faire plus de {{ limit }} caractères")]
     private ?string $title = null;
 
     #[ORM\Column(length: 255, nullable: true)]
     #[Groups(["getMovies", "getActors", "getWriters", "getGenres"])]
+    #[Assert\NotBlank(message: "Le rated du film est obligatoire")]
+    #[Assert\Length(min: 1, max: 10, minMessage: "Le rated doit faire au moins {{ limit }} caractères", 
+                    maxMessage: "Le rated ne peut pas faire plus de {{ limit }} caractères")]
     private ?string $rated = null;
 
     #[ORM\Column(type: Types::DATE_MUTABLE)]
