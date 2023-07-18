@@ -97,7 +97,7 @@ class AppFixtures extends Fixture
             $minute = rand(10, 55);
             $movie->setRuntime("1h" . $minute);
             $movie->setPlot("Ceci est la description du film " . $i . "-> In non castra Paulus squalorem castra uncosque plures nullos enim Constantio plures multos uncosque proscripti actique nullos ad sunt multos movebantur alii.");
-            $movie->setPoster('default.png');
+            $movie->setPoster('default.jpg');
             $movie->setSlug($this->slugger->slug($movie->getTitle()));
             $numberActor = rand(3, 7);
             $numberWriter = rand(3, 7);
